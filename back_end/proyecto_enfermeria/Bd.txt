@@ -1,0 +1,54 @@
+CREATE DATABASE IF NOT EXISTS enfermeria_db;
+USE enfermeria_db;
+
+CREATE TABLE admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    profile_pic VARCHAR(255) DEFAULT 'https://via.placeholder.com/50',
+    treatment TEXT NOT NULL,
+    medications JSON,
+    log TEXT,
+    medication_taken BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+
+
+datos de prueba 
+        USE enfermeria_db;
+
+-- Insert sample administrators
+INSERT INTO admins (name, email, password) VALUES
+('Admin Uno', 'admin1@example.com', 'password123'),
+('Admin Dos', 'admin2@example.com', 'securepass456'),
+('Admin Tres', 'admin3@example.com', 'adminpass789');
+
+-- Insert sample users
+INSERT INTO users (name, profile_pic, treatment, medications, log, medication_taken) VALUES
+('María García', 'https://randomuser.me/api/portraits/women/1.jpg', 'Tratamiento para hipertensión', 
+ '["Losartan", "Amlodipino"]', 'Presión arterial estable esta semana', true),
+ 
+('Juan Rodríguez', 'https://randomuser.me/api/portraits/men/2.jpg', 'Control de diabetes', 
+ '["Metformina", "Insulina"]', 'Niveles de glucosa fluctuantes', false),
+ 
+('Ana Martínez', 'https://randomuser.me/api/portraits/women/3.jpg', 'Terapia para artritis', 
+ '["Ibuprofeno", "Prednisona"]', 'Dolor reducido en articulaciones', true),
+ 
+('Carlos López', 'https://randomuser.me/api/portraits/men/4.jpg', 'Tratamiento para asma', 
+ '["Salbutamol", "Fluticasona"]', 'Sin ataques de asma esta semana', true),
+ 
+('Laura Sánchez', 'https://randomuser.me/api/portraits/women/5.jpg', 'Manejo de migraña', 
+ '["Sumatriptán", "Propranolol"]', 'Dos episodios de migraña leve', false);
+
+
