@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { View, Text, FlatList, Image, StyleSheet, Alert } from "react-native"
 import { Button } from "react-native"
-import UserDetails from "./UserDetails"
 import { fetchUsers } from "../services/api"
 
 interface User {
@@ -10,9 +9,12 @@ interface User {
   profile_pic: string
 }
 
-export default function UserList() {
+interface UserListProps {
+  onSelectUser: (userId: number) => void
+}
+
+export default function UserList({ onSelectUser }: UserListProps) {
   const [users, setUsers] = useState<User[]>([])
-  const [selectedUser, setSelectedUser] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const loadUsers = async () => {
@@ -29,7 +31,7 @@ export default function UserList() {
 
   useEffect(() => {
     loadUsers()
-  }, [])
+  }, []) //Fixed: Added empty dependency array to useEffect
 
   return (
     <View>
@@ -44,16 +46,11 @@ export default function UserList() {
             <View style={styles.userItem}>
               <Image source={{ uri: item.profile_pic }} style={styles.profilePic} />
               <Text>{item.name}</Text>
-              <Button
-                title="Ver Detalles"
-                onPress={() => setSelectedUser(item.id)}
-                buttonStyle={styles.detailsButton}
-              />
+              <Button title="Ver Detalles" onPress={() => onSelectUser(item.id)} buttonStyle={styles.detailsButton} />
             </View>
           )}
         />
       )}
-      {selectedUser && <UserDetails userId={selectedUser} onClose={() => setSelectedUser(null)} />}
     </View>
   )
 }

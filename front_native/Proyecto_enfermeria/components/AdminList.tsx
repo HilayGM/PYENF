@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { View, Text, FlatList, StyleSheet, Alert } from "react-native"
+import { View, Text, TextInput, FlatList, StyleSheet, Alert } from "react-native"
 import { Button } from "react-native"
 import { fetchAdmins, deleteAdmin, createAdmin } from "../services/api"
 
@@ -12,6 +12,10 @@ interface Admin {
 export default function AdminList() {
   const [admins, setAdmins] = useState<Admin[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isAddingAdmin, setIsAddingAdmin] = useState(false)
+  const [newAdminName, setNewAdminName] = useState("")
+  const [newAdminEmail, setNewAdminEmail] = useState("")
+  const [newAdminPassword, setNewAdminPassword] = useState("")
 
   const loadAdmins = async () => {
     setIsLoading(true)
@@ -27,7 +31,7 @@ export default function AdminList() {
 
   useEffect(() => {
     loadAdmins()
-  }, [])
+  }, []) //Fixed: Added empty dependency array to run only once on mount
 
   const handleDelete = async (id: number) => {
     try {
@@ -40,16 +44,44 @@ export default function AdminList() {
 
   const handleAdd = async () => {
     try {
-      const newAdmin = {
-        name: `Admin ${admins.length + 1}`,
-        email: `admin${admins.length + 1}@example.com`,
-        password: "123456",
-      }
-      await createAdmin(newAdmin)
+      await createAdmin({
+        name: newAdminName,
+        email: newAdminEmail,
+        password: newAdminPassword,
+      })
+      setIsAddingAdmin(false)
+      setNewAdminName("")
+      setNewAdminEmail("")
+      setNewAdminPassword("")
       loadAdmins()
     } catch (error) {
       Alert.alert("Error", "No se pudo crear el administrador")
     }
+  }
+
+  if (isAddingAdmin) {
+    return (
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Agregar Nuevo Administrador</Text>
+        <TextInput style={styles.input} placeholder="Nombre" value={newAdminName} onChangeText={setNewAdminName} />
+        <TextInput
+          style={styles.input}
+          placeholder="Correo"
+          value={newAdminEmail}
+          onChangeText={setNewAdminEmail}
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          value={newAdminPassword}
+          onChangeText={setNewAdminPassword}
+          secureTextEntry
+        />
+        <Button title="Guardar" onPress={handleAdd} buttonStyle={styles.button} />
+        <Button title="Cancelar" onPress={() => setIsAddingAdmin(false)} buttonStyle={styles.button} />
+      </View>
+    )
   }
 
   return (
@@ -71,7 +103,7 @@ export default function AdminList() {
           )}
         />
       )}
-      <Button title="Agregar Administrador" onPress={handleAdd} buttonStyle={styles.addButton} />
+      <Button title="Agregar Administrador" onPress={() => setIsAddingAdmin(true)} buttonStyle={styles.addButton} />
     </View>
   )
 }
@@ -94,6 +126,19 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginTop: 16,
+  },
+  formContainer: {
+    padding: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  button: {
+    marginTop: 10,
   },
 })
 

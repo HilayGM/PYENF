@@ -1,35 +1,32 @@
 import React, { useState } from "react"
 import { View, StyleSheet } from "react-native"
-import { Button } from "react-native"
-import AdminList from "../../components/AdminList"
-import UserList from "../../components/UserList"
+import Login from "../../components/Login"
+import AdminDashboard from "../../components/AdminDashboard"
 
 export default function App() {
-  const [showAdmins, setShowAdmins] = useState(false)
-  const [showUsers, setShowUsers] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isMainAdmin, setIsMainAdmin] = useState(false)
+  const [currentAdminEmail, setCurrentAdminEmail] = useState("")
+
+  const handleLogin = (isAdmin: boolean, email: string) => {
+    setIsLoggedIn(true)
+    setIsMainAdmin(isAdmin)
+    setCurrentAdminEmail(email)
+  }
+
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    setIsMainAdmin(false)
+    setCurrentAdminEmail("")
+  }
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Administradores"
-          onPress={() => {
-            setShowAdmins(true)
-            setShowUsers(false)
-          }}
-          buttonStyle={styles.button}
-        />
-        <Button
-          title="Usuarios"
-          onPress={() => {
-            setShowUsers(true)
-            setShowAdmins(false)
-          }}
-          buttonStyle={styles.button}
-        />
-      </View>
-      {showAdmins && <AdminList />}
-      {showUsers && <UserList />}
+      {isLoggedIn ? (
+        <AdminDashboard isMainAdmin={isMainAdmin} onLogout={handleLogout} />
+      ) : (
+        <Login onLogin={handleLogin} />
+      )}
     </View>
   )
 }
@@ -37,15 +34,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 16,
-  },
-  button: {
-    width: 150,
   },
 })
 
